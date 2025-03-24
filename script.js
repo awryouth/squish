@@ -56,7 +56,7 @@ function drawBoard() {
         cellEl.style.top = `${r * 90}px`;
 
         // If you have an image for this tile, set it as background
-        cellEl.style.backgroundImage = `url("tiles/${value}.png")`;
+        cellEl.style.backgroundImage = `url("tiles/${value}.jpg")`;
         cellEl.style.backgroundSize = "cover";
 
         boardEl.appendChild(cellEl);
