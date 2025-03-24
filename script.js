@@ -49,7 +49,7 @@ function drawBoard() {
         cellEl.style.left = `${c * 180}px`;
         cellEl.style.top = `${r * 180}px`;
         // Set tile's image
-        cellEl.style.backgroundImage = `url("tiles/tile${value}.jpg")`;
+        cellEl.style.backgroundImage = `url("tiles/${value}.jpg")`;
         cellEl.style.backgroundSize = "cover";
 
         // Add a numeric overlay in bottom-right corner
@@ -208,7 +208,7 @@ function animateSlide(oldBoard, newBoard) {
       // Create a temp tile
       const tempTile = document.createElement("div");
       tempTile.classList.add("cell");
-      tempTile.style.backgroundImage = `url("tiles/tile${newVal}.jpg")`;
+      tempTile.style.backgroundImage = `url("tiles/${newVal}.jpg")`;
       tempTile.style.backgroundSize = "cover";
       // Start at old pos
       tempTile.style.left = `${startC * 180}px`;
