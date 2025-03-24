@@ -22,8 +22,8 @@ h1 {
 
 .game-container {
   position: relative;
-  width: 360px; /* 4 cells x 90px each */
-  height: 360px;
+  width: 720px; /* 4 cells x 90px each */
+  height: 720px;
   background: #bbada0;
   border-radius: 6px;
   padding: 10px;
@@ -38,8 +38,8 @@ h1 {
 
 .cell {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 160px;
+  height: 160px;
   background: #ccc0b3;
   border-radius: 4px;
   display: flex;          /* For any child alignment (like text) */
