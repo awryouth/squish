@@ -56,7 +56,7 @@ function drawBoard() {
         cellEl.style.top = `${r * 90}px`;
 
         // If you have an image for this tile, set it as background
-        cellEl.style.backgroundImage = `url("images/tile${value}.png")`;
+        cellEl.style.backgroundImage = `url("tiles/${value}.png")`;
         cellEl.style.backgroundSize = "cover";
 
         boardEl.appendChild(cellEl);
@@ -168,14 +168,15 @@ function checkGameState() {
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       if (board[r][c] === 1024) {
-        alert("You made the 1024 tile! (Keep going or restart?)");
+        alert("You got 1024!)");
         return;
       }
     }
   }
+
   // Check if any move is possible
   if (!anyMovesLeft()) {
-    alert("Game Over! No moves left.");
+    alert("Game Over!");
   }
 }
 
