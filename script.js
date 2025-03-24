@@ -52,8 +52,8 @@ function drawBoard() {
       if (value !== 0) {
         const cellEl = document.createElement("div");
         cellEl.classList.add("cell");
-        cellEl.style.left = `${c * 90}px`;
-        cellEl.style.top = `${r * 90}px`;
+        cellEl.style.left = `${c * 180}px`;
+        cellEl.style.top = `${r * 180}px`;
 
         // If you have an image for this tile, set it as background
         cellEl.style.backgroundImage = `url("tiles/${value}.jpg")`;
@@ -64,8 +64,8 @@ function drawBoard() {
         // Optionally draw "empty" cells for debugging:
         const emptyCellEl = document.createElement("div");
         emptyCellEl.classList.add("cell");
-        emptyCellEl.style.left = `${c * 90}px`;
-        emptyCellEl.style.top = `${r * 90}px`;
+        emptyCellEl.style.left = `${c * 180}px`;
+        emptyCellEl.style.top = `${r * 180}px`;
         emptyCellEl.style.opacity = "0.3";
         boardEl.appendChild(emptyCellEl);
       }
@@ -81,11 +81,11 @@ function drawBoard() {
 function moveBoard(direction) {
   // Step 1: Transform the board as needed to make 'left' the only logic we handle
   // For example, for 'right', reverse each row; for 'up', transpose; etc.
-  let transformed = false;
+  let transposed = false;
   let reversed = false;
   if (direction === "up" || direction === "down") {
     board = transpose(board);
-    transformed = true;
+    transposed = true;
   }
   if (direction === "right" || direction === "down") {
     board = reverseRows(board);
@@ -105,7 +105,7 @@ function moveBoard(direction) {
   if (reversed) {
     board = reverseRows(board);
   }
-  if (transformed) {
+  if (transposed) {
     board = transpose(board);
   }
 
