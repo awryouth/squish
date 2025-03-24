@@ -62,12 +62,12 @@ function drawBoard() {
         boardEl.appendChild(cellEl);
       } else {
         // Optionally draw "empty" cells for debugging:
-        // const emptyCellEl = document.createElement("div");
-        // emptyCellEl.classList.add("cell");
-        // emptyCellEl.style.left = `${c * 90}px`;
-        // emptyCellEl.style.top = `${r * 90}px`;
-        // emptyCellEl.style.opacity = "0.3";
-        // boardEl.appendChild(emptyCellEl);
+        const emptyCellEl = document.createElement("div");
+        emptyCellEl.classList.add("cell");
+        emptyCellEl.style.left = `${c * 90}px`;
+        emptyCellEl.style.top = `${r * 90}px`;
+        emptyCellEl.style.opacity = "0.3";
+        boardEl.appendChild(emptyCellEl);
       }
     }
   }
