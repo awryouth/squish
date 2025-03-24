@@ -22,8 +22,8 @@ h1 {
 
 .game-container {
   position: relative;
-  width: 730px;
-  height: 730px;
+  width: 360px; /* 4 cells x 90px each */
+  height: 360px;
   background: #bbada0;
   border-radius: 6px;
   padding: 10px;
@@ -42,14 +42,32 @@ h1 {
   height: 80px;
   background: #ccc0b3;
   border-radius: 4px;
-  display: flex;
+  display: flex;          /* For any child alignment (like text) */
   align-items: center;
   justify-content: center;
   font-size: 28px;
   font-weight: bold;
   color: #776e65;
-  /* key addition: animate top/left changes over 200ms */
   transition: top 0.2s ease, left 0.2s ease;
+  /* Images are set inline in JS as background-image */
+}
+
+/* Position the numeric label in the bottom-right corner 
+   and add a text-shadow to give it a black outline. */
+.tile-value {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+
+  /* Simple outline trick using multiple shadows. */
+  text-shadow:
+    -1px 0 2px #000,
+     1px 0 2px #000,
+     0 -1px 2px #000,
+     0 1px 2px #000;
 }
 
 .controls {
