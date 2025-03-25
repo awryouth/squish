@@ -108,27 +108,29 @@ function drawBoard() {
 }
 
 /**
- * Moves the board in a direction ("left","right","up","down"), merges tiles, and spawns a new tile if changed.
- * Returns true if the board changed, false if no move was made.
+ * Moves the board in a direction ("left","right","up","down"), merges tiles,
+ * and spawns a new tile if changed. Returns true if the board changed,
+ * false if no move was made.
  */
 function moveBoard(direction) {
   console.log(`moveBoard() called with direction: ${direction}`);
   let transformed = false;
   let reversed = false;
 
-  // If moving up/down, transpose the board so we can handle it like left/right
+  // If moving up/down, transpose the board so we handle it like left/right
   if (direction === "up" || direction === "down") {
     console.log("moveBoard(): Transposing board for up/down");
     board = transpose(board);
     transformed = true;
   }
-  // If moving right/down, reverse each row so we can handle it like "left"
+  // If moving right/down, reverse each row so we handle it like "left"
   if (direction === "right" || direction === "down") {
     console.log("moveBoard(): Reversing rows for right/down");
     board = reverseRows(board);
     reversed = true;
   }
 
+  // Now handle as if moving left
   let moved = false;
   for (let r = 0; r < BOARD_SIZE; r++) {
     const row = board[r];
@@ -146,6 +148,8 @@ function moveBoard(direction) {
     console.log("moveBoard(): Re-transposing board to restore orientation");
     board = transpose(board);
   }
+
+  console.log("moveBoard(): final board after merges:", board);
 
   if (moved) {
     console.log("moveBoard(): Board changed, spawning new tile");
@@ -262,6 +266,9 @@ function anyMovesLeft() {
 /**
  * Animates tiles from oldBoard to newBoard by sliding them in percentages.
  * When transitions end, finalizes the board with drawBoard() and checks state.
+ *
+ * Big fix: If a tile's old position == new position, we skip incrementing tilesAnimating,
+ * because the browser won't fire transitionend for zero-movement transitions.
  */
 function animateSlide(oldBoard, newBoard) {
   console.log("animateSlide() called");
@@ -293,7 +300,9 @@ function animateSlide(oldBoard, newBoard) {
       // If no match found, treat as newly spawned tile
       const startR = foundOldPos ? foundOldPos.r : r;
       const startC = foundOldPos ? foundOldPos.c : c;
-      console.log(`animateSlide(): tile ${newVal} moves from (${startR},${startC}) to (${r},${c})`);
+      console.log(
+        `animateSlide(): tile ${newVal} from (${startR},${startC}) to (${r},${c})`
+      );
 
       // Create a temp tile at the old position
       const tempTile = document.createElement("div");
@@ -320,36 +329,48 @@ function animateSlide(oldBoard, newBoard) {
       // Force reflow so the initial positions are set
       tempTile.getBoundingClientRect();
 
-      // Slide to new position
-      tilesAnimating++;
-      tempTile.addEventListener("transitionend", () => {
-        tilesAnimating--;
-        console.log(`animateSlide(): tile ${newVal} finished transition`);
-        if (tilesAnimating === 0) {
-          console.log("animateSlide(): All transitions complete, finalizing board");
-          boardEl.innerHTML = "";
-          drawBoard();
-          checkGameState();
-          isAnimating = false;
-        }
-      });
+      // Check if the tile actually moved
+      const samePosition = (startR === r && startC === c);
+      if (!samePosition) {
+        // Slide to the new position
+        tilesAnimating++;
+        tempTile.addEventListener("transitionend", () => {
+          tilesAnimating--;
+          console.log(`animateSlide(): tile ${newVal} finished transition`);
+          if (tilesAnimating === 0) {
+            finalizeAnimation(boardEl);
+          }
+        });
 
-      // Animate in the next frame
-      requestAnimationFrame(() => {
-        tempTile.style.left = getOffsetPercent(c) + "%";
-        tempTile.style.top = getOffsetPercent(r) + "%";
-      });
+        // Animate in the next frame
+        requestAnimationFrame(() => {
+          tempTile.style.left = getOffsetPercent(c) + "%";
+          tempTile.style.top = getOffsetPercent(r) + "%";
+        });
+      } else {
+        // No movement needed; skip transitions
+        console.log(`animateSlide(): tile ${newVal} didn't move, no transition event`);
+      }
     }
   }
 
   // If no tiles animate, finalize immediately
   if (tilesAnimating === 0) {
     console.log("animateSlide(): No tiles animating, finalizing immediately");
-    boardEl.innerHTML = "";
-    drawBoard();
-    checkGameState();
-    isAnimating = false;
+    finalizeAnimation(boardEl);
   }
+}
+
+/**
+ * Called once all transitions are done or if none started.
+ * Cleans up temporary tiles, draws the final board, checks for game state,
+ * and releases the animation lock.
+ */
+function finalizeAnimation(boardEl) {
+  boardEl.innerHTML = "";
+  drawBoard();
+  checkGameState();
+  isAnimating = false;
 }
 
 /**
