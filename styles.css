@@ -68,8 +68,14 @@ html, body {
 }
 
 #new-game-btn {
+  background: linear-gradient(to bottom right, #3498db, #2980b9);
   padding: 10px;
   border-radius: 8px;
   font-size: 32px;
   cursor: pointer;
+}
+
+#new-game-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset;
 }
