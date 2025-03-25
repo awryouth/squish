@@ -85,11 +85,11 @@ function getTileScale(value) {
 
 /**
  * Returns an opacity factor (0.6 -> 1.0) based on tile value.
- * 2 => 0.6, 1024 => 1.0
+ * 2 => min opacity, 128 => max opacity
  */
 function getTileOpacity(value) {
   const minValue = 2;
-  const maxValue = 1024;
+  const maxValue = 128;
   const minOpacity = 0.8;
   const maxOpacity = 1.0;
 
