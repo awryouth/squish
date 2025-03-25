@@ -1,17 +1,31 @@
-/****************************************************
- * 1024 Game with Unique-ID Tiles + Value-Based Size
- ****************************************************/
+/***********************************************************
+ * 1024 Game
+ * - Unique ID merges
+ * - Responsive scaling
+ * - Desktop arrow keys
+ * - Mobile swipe detection
+ ***********************************************************/
+
 const BOARD_SIZE = 4;
 let board = [];
 let isAnimating = false;
 let nextTileId = 1;
 
-/** Create a new tile object with a unique ID. */
+// For touch/mouse swipe
+let touchStartX = null;
+let touchStartY = null;
+const SWIPE_THRESHOLD = 30; // px distance needed to register a swipe
+
+/**
+ * Creates a new tile object with unique id.
+ */
 function createTile(value) {
   return { id: nextTileId++, value };
 }
 
-/** Create an empty 4x4 board of nulls. */
+/**
+ * Creates an empty 4x4 board of nulls.
+ */
 function createEmptyBoard() {
   board = [];
   for (let r = 0; r < BOARD_SIZE; r++) {
@@ -23,7 +37,9 @@ function createEmptyBoard() {
   }
 }
 
-/** Spawn a 2 or 4 in a random empty spot. */
+/**
+ * Spawns a 2 or 4 in a random empty spot.
+ */
 function spawnTile() {
   const emptyCells = [];
   for (let r = 0; r < BOARD_SIZE; r++) {
@@ -86,48 +102,52 @@ function getTileOpacity(value) {
 /** 
  * Renders the board's final state (no animation).
  * Applies size/opacity scaling for each tile.
+ * Renders the final board (no animation).
  */
 function drawBoard() {
   const boardEl = document.getElementById("game-board");
   boardEl.innerHTML = "";
 
   const tileSizePercent = getTileSizePercent();
+
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       const tile = board[r][c];
-      if (tile) {
-        const cellEl = document.createElement("div");
-        cellEl.classList.add("cell");
+      if (!tile) continue;
 
-        // Position
-        cellEl.style.left = getOffsetPercent(c) + "%";
-        cellEl.style.top = getOffsetPercent(r) + "%";
-        cellEl.style.width = tileSizePercent + "%";
-        cellEl.style.height = tileSizePercent + "%";
+      const cellEl = document.createElement("div");
+      cellEl.classList.add("cell");
 
-        // Background image
-        cellEl.style.backgroundImage = `url("tiles/${tile.value}.jpg")`;
-        cellEl.style.backgroundSize = "cover";
+      // Position
+      cellEl.style.left = getOffsetPercent(c) + "%";
+      cellEl.style.top = getOffsetPercent(r) + "%";
+      cellEl.style.width = tileSizePercent + "%";
+      cellEl.style.height = tileSizePercent + "%";
 
-        // Value text
-        const tileValue = document.createElement("span");
-        tileValue.classList.add("tile-value");
-        tileValue.textContent = tile.value;
-        cellEl.appendChild(tileValue);
+      // Background image
+      cellEl.style.backgroundImage = `url("tiles/${tile.value}.jpg")`;
+      cellEl.style.backgroundSize = "cover";
 
-        // Scale & opacity
-        const scale = getTileScale(tile.value);
-        const opacity = getTileOpacity(tile.value);
-        cellEl.style.transform = `scale(${scale})`;
-        cellEl.style.opacity = opacity;
+      // Value text
+      const tileValue = document.createElement("span");
+      tileValue.classList.add("tile-value");
+      tileValue.textContent = tile.value;
+      cellEl.appendChild(tileValue);
 
-        boardEl.appendChild(cellEl);
-      }
+      // Scale & opacity
+      const scale = getTileScale(tile.value);
+      const opacity = getTileOpacity(tile.value);
+      cellEl.style.transform = `scale(${scale})`;
+      cellEl.style.opacity = opacity;
+
+      boardEl.appendChild(cellEl);
     }
   }
 }
 
-/** Move board (merge) in direction, spawn tile if changed, return boolean. */
+/**
+ * Moves board in a direction, merges, spawns tile if changed.
+ */
 function moveBoard(direction) {
   let transformed = false;
   let reversed = false;
@@ -162,8 +182,7 @@ function moveBoard(direction) {
 }
 
 /**
- * Merges one row to the left. 
- * We keep the first tile's ID, remove the second.
+ * Merges one row to the left.
  */
 function collapseRowLeft(row) {
   const filtered = row.filter(t => t !== null);
@@ -173,8 +192,8 @@ function collapseRowLeft(row) {
     const curr = filtered[i];
     const next = filtered[i + 1];
     if (curr.value === next.value) {
-      curr.value += next.value; // keep same ID, update value
-      filtered[i + 1] = null;   // second tile removed
+      curr.value += next.value;
+      filtered[i + 1] = null;
       didChange = true;
       i++;
     }
@@ -184,7 +203,6 @@ function collapseRowLeft(row) {
     merged.push(null);
   }
 
-  // detect final arrangement differences
   for (let j = 0; j < row.length; j++) {
     if (row[j] !== merged[j]) {
       didChange = true;
@@ -194,18 +212,17 @@ function collapseRowLeft(row) {
   return { newRow: merged, didChange };
 }
 
-/** 
- * Animate from oldBoard to newBoard. Scale/opacity are applied
- * to the "temp" tiles also, so they remain consistent with final.
+/**
+ * Animates old->new board states.
  */
 function animateSlide(oldBoard, newBoard) {
   const boardEl = document.getElementById("game-board");
   boardEl.innerHTML = "";
 
   let tilesAnimating = 0;
-  const oldPositions = {}; // tileId => {r,c}
+  const oldPositions = {};
 
-  // gather positions from oldBoard
+  // gather old tile positions
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       const oldTile = oldBoard[r][c];
@@ -217,7 +234,6 @@ function animateSlide(oldBoard, newBoard) {
 
   const tileSizePercent = getTileSizePercent();
 
-  // for each tile in newBoard
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       const newTile = newBoard[r][c];
@@ -260,7 +276,6 @@ function animateSlide(oldBoard, newBoard) {
       // force reflow
       tempTile.getBoundingClientRect();
 
-      // check if moved
       if (startR !== r || startC !== c) {
         tilesAnimating++;
         tempTile.addEventListener("transitionend", () => {
@@ -276,13 +291,14 @@ function animateSlide(oldBoard, newBoard) {
       }
     }
   }
-
   if (tilesAnimating === 0) {
     finalizeAnimation(boardEl);
   }
 }
 
-/** Once all animations end, finalize board, check state, let new moves happen. */
+/**
+ * Finalize after animations: re-draw final, check state, allow next move.
+ */
 function finalizeAnimation(boardEl) {
   boardEl.innerHTML = "";
   drawBoard();
@@ -290,15 +306,17 @@ function finalizeAnimation(boardEl) {
   isAnimating = false;
 }
 
-/** Makes a deep copy of the board. */
-function copyBoard(src) {
+/**
+ * Deep-copy the board of tile objects.
+ */
+function copyBoard(source) {
   const newB = [];
   for (let r = 0; r < BOARD_SIZE; r++) {
     const row = [];
     for (let c = 0; c < BOARD_SIZE; c++) {
-      const t = src[r][c];
-      if (t) {
-        row.push({ id: t.id, value: t.value });
+      const tile = source[r][c];
+      if (tile) {
+        row.push({ id: tile.id, value: tile.value });
       } else {
         row.push(null);
       }
@@ -308,12 +326,12 @@ function copyBoard(src) {
   return newB;
 }
 
-/** Reverses each row (used for 'right' or 'down'). */
+/** Reverse each row (for 'right'/'down'). */
 function reverseRows(mat) {
   return mat.map(row => row.slice().reverse());
 }
 
-/** Transposes the board (used for 'up' or 'down'). */
+/** Transpose the board (for 'up'/'down'). */
 function transpose(mat) {
   const out = [];
   for (let c = 0; c < BOARD_SIZE; c++) {
@@ -326,21 +344,12 @@ function transpose(mat) {
   return out;
 }
 
-/** Keydown handler => arrow directions => handleMove. */
-function handleKey(e) {
-  if (isAnimating) return;
-
-  switch (e.key) {
-    case "ArrowLeft": e.preventDefault(); handleMove("left"); break;
-    case "ArrowRight": e.preventDefault(); handleMove("right"); break;
-    case "ArrowUp": e.preventDefault(); handleMove("up"); break;
-    case "ArrowDown": e.preventDefault(); handleMove("down"); break;
-  }
-}
-
-/** Top-level move => check changed => animate or skip. */
+/**
+ * Handle a single move in direction (arrow or swipe).
+ */
 function handleMove(direction) {
   if (isAnimating) return;
+
   const oldB = copyBoard(board);
   const changed = moveBoard(direction);
   if (!changed) return;
@@ -349,9 +358,10 @@ function handleMove(direction) {
   animateSlide(oldB, board);
 }
 
-/** Are there any moves left or is 1024 tile present? */
+/**
+ * Check if 1024 tile or no moves remain.
+ */
 function checkGameState() {
-  // check if any tile is 1024
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       const tile = board[r][c];
@@ -361,27 +371,28 @@ function checkGameState() {
       }
     }
   }
-  // check if any moves left
   if (!anyMovesLeft()) {
     alert("Game Over! No moves left.");
   }
 }
 
-/** If there's an empty cell or a possible merge, returns true. */
+/**
+ * True if there's an empty cell or a merge possibility.
+ */
 function anyMovesLeft() {
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
-      if (!board[r][c]) return true; // empty
+      if (!board[r][c]) return true;
     }
   }
-  // check merges horizontally
+  // check horizontal merges
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE - 1; c++) {
       const a = board[r][c], b = board[r][c+1];
       if (a && b && a.value === b.value) return true;
     }
   }
-  // check merges vertically
+  // check vertical merges
   for (let c = 0; c < BOARD_SIZE; c++) {
     for (let r = 0; r < BOARD_SIZE - 1; r++) {
       const a = board[r][c], b = board[r+1][c];
@@ -391,17 +402,84 @@ function anyMovesLeft() {
   return false;
 }
 
-/** Each cell is offset from the top-left in % increments. */
+/**
+ * Convert grid index => left/top offset in % for a 4×4.
+ */
 function getOffsetPercent(index) {
   return (index * 100) / BOARD_SIZE;
 }
 
-/** Each tile's width/height in % => 25% for a 4×4. */
+/** Each tile's width/height => 25% in 4×4. */
 function getTileSizePercent() {
   return 100 / BOARD_SIZE;
 }
 
-/** Initialize a new game. */
+/**
+ * KEYBOARD: Listen for arrow keys => handleMove.
+ */
+function handleKey(e) {
+  if (isAnimating) return;
+  switch (e.key) {
+    case "ArrowLeft": e.preventDefault(); handleMove("left"); break;
+    case "ArrowRight": e.preventDefault(); handleMove("right"); break;
+    case "ArrowUp": e.preventDefault(); handleMove("up"); break;
+    case "ArrowDown": e.preventDefault(); handleMove("down"); break;
+  }
+}
+
+/**
+ * TOUCH: On touchstart, record start coords.
+ */
+function handleTouchStart(e) {
+  // if single touch, track it
+  if (e.touches && e.touches.length === 1) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+}
+
+/**
+ * TOUCH: On touchend, compare end coords - start coords to get direction.
+ */
+function handleTouchEnd(e) {
+  if (!touchStartX || !touchStartY) return;
+
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+  // reset
+  touchStartX = null;
+  touchStartY = null;
+
+  if (Math.abs(deltaX) < SWIPE_THRESHOLD && Math.abs(deltaY) < SWIPE_THRESHOLD) {
+    // Not a big enough swipe
+    return;
+  }
+
+  // Determine direction
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // horizontal
+    if (deltaX > 0) {
+      handleMove("right");
+    } else {
+      handleMove("left");
+    }
+  } else {
+    // vertical
+    if (deltaY > 0) {
+      handleMove("down");
+    } else {
+      handleMove("up");
+    }
+  }
+}
+
+/**
+ * Start a new game.
+ */
 function initGame() {
   createEmptyBoard();
   spawnTile();
@@ -409,11 +487,21 @@ function initGame() {
   drawBoard();
 }
 
-/** On window load => set up. */
+/**
+ * Setup event listeners and start the game.
+ */
 window.addEventListener("load", () => {
   initGame();
+
+  // Keyboard arrows
   window.addEventListener("keydown", handleKey);
 
+  // Touch events on the container
+  const container = document.getElementById("game-container");
+  container.addEventListener("touchstart", handleTouchStart, { passive: true });
+  container.addEventListener("touchend", handleTouchEnd);
+
+  // "New Game" button
   document.getElementById("new-game-btn").addEventListener("click", () => {
     initGame();
   });
