@@ -90,7 +90,7 @@ function getTileScale(value) {
 function getTileOpacity(value) {
   const minValue = 2;
   const maxValue = 1024;
-  const minOpacity = 0.6;
+  const minOpacity = 0.8;
   const maxOpacity = 1.0;
 
   const val = Math.min(Math.max(value, minValue), maxValue);
