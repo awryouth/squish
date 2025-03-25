@@ -496,10 +496,9 @@ window.addEventListener("load", () => {
   // Keyboard arrows
   window.addEventListener("keydown", handleKey);
 
-  // Touch events on the container
-  const container = document.getElementById("game-container");
-  container.addEventListener("touchstart", handleTouchStart, { passive: true });
-  container.addEventListener("touchend", handleTouchEnd);
+  // Touch events
+  window.addEventListener("touchstart", handleTouchStart, { passive: false });
+  window.addEventListener("touchend", handleTouchEnd);
 
   // "New Game" button
   document.getElementById("new-game-btn").addEventListener("click", () => {
