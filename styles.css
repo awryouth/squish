@@ -50,9 +50,10 @@ html, body {
   position: absolute;
   bottom: 4px;
   right: 4px;
+
+  color: #fff;
   font-size: 48px;
   font-weight: bold;
-  color: #fff;
   text-shadow:
     -1px 0 2px #000,
      1px 0 2px #000,
@@ -67,6 +68,8 @@ html, body {
 }
 
 #new-game-btn {
+  padding: 10px;
+  border-radius: 8px;
   font-size: 32px;
   cursor: pointer;
 }
