@@ -15,6 +15,9 @@ html, body {
   align-items: center;
 
   background: #660066;
+
+  font-family: Tahoma, Arial, sans-serif;
+  font-weight: bold;
 }
 
 /* 
@@ -53,7 +56,6 @@ html, body {
 
   color: #fff;
   font-size: 48px;
-  font-weight: bold;
   text-shadow:
     -1px 0 2px #000,
      1px 0 2px #000,
@@ -68,9 +70,9 @@ html, body {
 }
 
 #new-game-btn {
-  background: linear-gradient(to bottom right, #3498db, #2980b9);
   padding: 10px;
   border-radius: 8px;
+  background: linear-gradient(to bottom right, #3498db, #2980b9);
   font-size: 32px;
   cursor: pointer;
 }
