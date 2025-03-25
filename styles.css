@@ -26,7 +26,7 @@ html, body {
 .game-container {
   width: 95%;
   aspect-ratio: 1 / 1;
-  background: #886688;
+  background: #aa88aa;
   border-radius: 10px;
   position: relative;
 }
@@ -44,17 +44,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
-  background: #ffffff;
 }
 
 .tile-value {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  font-size: 24px;
+  font-size: 48px;
   font-weight: bold;
   color: #fff;
   text-shadow:
