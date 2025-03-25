@@ -8,34 +8,25 @@ html, body {
   touch-action: none;         /* disable default gestures */
   overscroll-behavior: none;  /* prevent bounce-overscroll */
 
-  /* Center all child content horizontally and (optionally) vertically */
+  /* Center all child content horizontally and vertically */
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;  /* or 'center' if you want vertical centering too */
-}
-
-h1 {
-  margin: 20px 0; /* optional spacing */
-  text-align: center;
 }
 
 /* 
-  A responsive square container that:
+  A responsive container that:
    - uses 95% of the screen width,
-   - is center aligned (thanks to parent flex),
-   - has a max-width for big screens,
+   - is center aligned,
    - maintains a 1:1 aspect ratio.
 */
 .game-container {
-  width: 95%;                /* 95% of the viewport/device width */
-  max-width: 600px;          /* optional limit on very large screens */
-  aspect-ratio: 1 / 1;       /* keep it square */
-  background: #bbada0;
-  border-radius: 6px;
+  width: 95%;
+  aspect-ratio: 1 / 1;
+  background: #886688;
+  border-radius: 10px;
   position: relative;
-  margin-bottom: 20px;
-  /* margin: 20px auto;  <-- if you prefer margin auto over flex for centering */
 }
 
 #game-board {
@@ -61,7 +52,7 @@ h1 {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: bold;
   color: #fff;
   text-shadow:
@@ -72,12 +63,12 @@ h1 {
 }
 
 .controls {
+  margin-top: 30px;
   margin-bottom: 30px;
   text-align: center;
 }
 
 #new-game-btn {
-  padding: 10px 20px;
-  font-size: 16px;
+  font-size: 32px;
   cursor: pointer;
 }
