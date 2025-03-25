@@ -13,6 +13,8 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  background: #660066;
 }
 
 /* 
@@ -42,10 +44,10 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
-  color: #776e65;
-  background: #ccc0b3;
+  color: #ffffff;
+  background: #ffffff;
 }
 
 .tile-value {
