@@ -225,4 +225,106 @@ function animateSlide(oldBoard, newBoard) {
       const tempTile = document.createElement("div");
       tempTile.classList.add("cell");
       tempTile.style.backgroundImage = `url("tiles/${newVal}.jpg")`;
-      tempTile.style.backgroundSize = "cover
+      tempTile.style.backgroundSize = "cover";
+
+      // Start in old pos (in %)
+      tempTile.style.left = getOffsetPercent(startC) + "%";
+      tempTile.style.top = getOffsetPercent(startR) + "%";
+      tempTile.style.width = tileSize + "%";
+      tempTile.style.height = tileSize + "%";
+
+      // Numeric label
+      const tileValue = document.createElement("span");
+      tileValue.classList.add("tile-value");
+      tileValue.textContent = newVal;
+      tempTile.appendChild(tileValue);
+
+      boardEl.appendChild(tempTile);
+
+      // Force reflow
+      tempTile.getBoundingClientRect();
+
+      // Slide to new position
+      tilesAnimating++;
+      tempTile.addEventListener("transitionend", () => {
+        tilesAnimating--;
+        if (tilesAnimating === 0) {
+          boardEl.innerHTML = "";
+          drawBoard();
+          checkGameState();
+          isAnimating = false;
+        }
+      });
+
+      // Animate in next frame
+      requestAnimationFrame(() => {
+        tempTile.style.left = getOffsetPercent(c) + "%";
+        tempTile.style.top = getOffsetPercent(r) + "%";
+      });
+    }
+  }
+
+  // If no tiles animate at all, finalize immediately
+  if (tilesAnimating === 0) {
+    boardEl.innerHTML = "";
+    drawBoard();
+    checkGameState();
+    isAnimating = false;
+  }
+}
+
+// 14) Handle a single move
+function handleMove(direction) {
+  if (isAnimating) return; // skip if in the middle of an animation
+  const oldBoard = copyBoard(board);
+
+  const changed = moveBoard(direction);
+  if (!changed) return; // no movement => no animation
+
+  isAnimating = true;
+  animateSlide(oldBoard, board);
+}
+
+// 15) Key listener
+function handleKey(e) {
+  switch (e.key) {
+    case "ArrowLeft":
+      e.preventDefault();
+      handleMove("left");
+      break;
+    case "ArrowRight":
+      e.preventDefault();
+      handleMove("right");
+      break;
+    case "ArrowUp":
+      e.preventDefault();
+      handleMove("up");
+      break;
+    case "ArrowDown":
+      e.preventDefault();
+      handleMove("down");
+      break;
+    default:
+      return;
+  }
+}
+
+// 16) Init game
+function initGame() {
+  createEmptyBoard();
+  spawnTile();
+  spawnTile();
+  drawBoard();
+}
+
+// 17) On page load
+window.addEventListener("load", () => {
+  initGame();
+
+  window.addEventListener("keydown", handleKey);
+
+  const newGameBtn = document.getElementById("new-game-btn");
+  newGameBtn.addEventListener("click", () => {
+    initGame();
+  });
+});
