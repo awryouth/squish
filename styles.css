@@ -1,49 +1,51 @@
-/* Basic reset */
-* {
-  box-sizing: border-box;
+/* Force no scrolling on the entire page */
+html, body {
   margin: 0;
   padding: 0;
-}
-
-html {
-  width: 100%;
-  overflow: hidden;
-}
-
-body {
-  font-family: sans-serif;
-  background: #660066;
-
-  /* prevent overscroll bounce*/
-  position: fixed;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-
   width: 100%;
   height: 100%;
-  padding-top: 30px;
+  /* Prevent scrolling */
+  overflow: hidden;
 
+  /* Keep the page from panning/zooming on touch */
+  touch-action: none;
+  /* Prevent overscroll in some browsers so it doesn't bounce or reveal UI */
+  overscroll-behavior: none;
+}
+
+/* 
+  If you prefer to only lock gestures within a container, 
+  you could do something like:
+
+.no-scroll {
+  touch-action: none;
+  overscroll-behavior: none;
+  /* potential overflow hidden on container */
+}
+*/
+
+/* The rest of your existing styles remain. */
+body {
+  font-family: sans-serif;
+  background: #f8f8f8;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
+  justify-content: flex-start;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
-/* A responsive square container that scales with window size. */
+/* Keep your container or game styles as normal. */
 .game-container {
-  width: 80vw;                 /* or 90vw, etc. */
-  max-width: 600px;           /* to limit it on large screens */
-  aspect-ratio: 1 / 1;        /* forces it to stay square */
-  background: #663366;
+  width: 80vw;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  background: #bbada0;
   border-radius: 6px;
   position: relative;
   margin-bottom: 20px;
 }
 
+/* etc. for #game-board, .cell, .tile-value, etc. */
 #game-board {
   position: absolute;
   width: 100%;
@@ -67,7 +69,7 @@ h1 {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: bold;
   color: #fff;
   text-shadow:
