@@ -2,13 +2,19 @@ const BOARD_SIZE = 4;
 let board = [];
 let isAnimating = false;
 
-// 1) Clone a 2D array
+/**
+ * Returns a copy of the given 2D board array.
+ */
 function copyBoard(sourceBoard) {
+  console.log("copyBoard() called");
   return sourceBoard.map(row => row.slice());
 }
 
-// 2) Create an empty board (all zeros)
+/**
+ * Creates a BOARD_SIZE x BOARD_SIZE array initialized to 0.
+ */
 function createEmptyBoard() {
+  console.log("createEmptyBoard() called");
   board = [];
   for (let r = 0; r < BOARD_SIZE; r++) {
     const row = [];
@@ -19,7 +25,9 @@ function createEmptyBoard() {
   }
 }
 
-// 3) Spawn a tile with value 2 or 4
+/**
+ * Spawns a new tile (2 or 4) in a random empty cell.
+ */
 function spawnTile() {
   const emptyCells = [];
   for (let r = 0; r < BOARD_SIZE; r++) {
@@ -29,24 +37,42 @@ function spawnTile() {
       }
     }
   }
-  if (emptyCells.length === 0) return;
+  console.log("spawnTile(): Found", emptyCells.length, "empty cells");
 
-  const { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-  board[r][c] = Math.random() < 0.9 ? 2 : 4;
+  if (emptyCells.length === 0) {
+    console.log("spawnTile(): No empty cells, cannot spawn");
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * emptyCells.length);
+  const { r, c } = emptyCells[randomIndex];
+  const newValue = Math.random() < 0.9 ? 2 : 4;
+  board[r][c] = newValue;
+
+  console.log(`spawnTile(): Spawned a ${newValue} at row=${r}, col=${c}`);
 }
 
-// 4) Compute the top/left in % for a given row/col in a BOARD_SIZE x BOARD_SIZE
+/**
+ * Calculates the top/left offset (in %) for a given row or col index.
+ */
 function getOffsetPercent(index) {
-  return (index * 100) / BOARD_SIZE; // e.g. for col=1 in a 4-wide board => 25%
+  // e.g. in a 4×4 board, each tile is 25%
+  return (index * 100) / BOARD_SIZE;
 }
 
-// 5) Compute width or height for a single tile in % (here: 100% / 4 = 25%)
+/**
+ * Calculates the tile size (in %) for a BOARD_SIZE x BOARD_SIZE grid.
+ */
 function getTileSizePercent() {
+  // e.g. for BOARD_SIZE=4 => 25%
   return 100 / BOARD_SIZE;
 }
 
-// 6) Draw the board in final positions (no transitions)
+/**
+ * Renders the board's final state (no animations).
+ */
 function drawBoard() {
+  console.log("drawBoard(): Updating DOM for the final board state");
   const boardEl = document.getElementById("game-board");
   boardEl.innerHTML = "";
 
@@ -58,17 +84,18 @@ function drawBoard() {
       if (value !== 0) {
         const cellEl = document.createElement("div");
         cellEl.classList.add("cell");
-        // Position in percentages
+
+        // Position & size in percentages
         cellEl.style.left = getOffsetPercent(c) + "%";
         cellEl.style.top = getOffsetPercent(r) + "%";
         cellEl.style.width = tileSize + "%";
         cellEl.style.height = tileSize + "%";
 
-        // Use the .jpg in the tiles/ folder
+        // Use tile image from tiles/{value}.jpg
         cellEl.style.backgroundImage = `url("tiles/${value}.jpg")`;
         cellEl.style.backgroundSize = "cover";
 
-        // Numeric label in bottom-right
+        // Numeric overlay
         const tileValue = document.createElement("span");
         tileValue.classList.add("tile-value");
         tileValue.textContent = value;
@@ -80,16 +107,24 @@ function drawBoard() {
   }
 }
 
-// 7) Move the board in a direction (merge logic), return true if changed
+/**
+ * Moves the board in a direction ("left","right","up","down"), merges tiles, and spawns a new tile if changed.
+ * Returns true if the board changed, false if no move was made.
+ */
 function moveBoard(direction) {
+  console.log(`moveBoard() called with direction: ${direction}`);
   let transformed = false;
   let reversed = false;
 
+  // If moving up/down, transpose the board so we can handle it like left/right
   if (direction === "up" || direction === "down") {
+    console.log("moveBoard(): Transposing board for up/down");
     board = transpose(board);
     transformed = true;
   }
+  // If moving right/down, reverse each row so we can handle it like "left"
   if (direction === "right" || direction === "down") {
+    console.log("moveBoard(): Reversing rows for right/down");
     board = reverseRows(board);
     reversed = true;
   }
@@ -102,25 +137,36 @@ function moveBoard(direction) {
     if (didChange) moved = true;
   }
 
+  // Reverse the transformations
   if (reversed) {
+    console.log("moveBoard(): Re-reversing rows to restore orientation");
     board = reverseRows(board);
   }
   if (transformed) {
+    console.log("moveBoard(): Re-transposing board to restore orientation");
     board = transpose(board);
   }
 
   if (moved) {
+    console.log("moveBoard(): Board changed, spawning new tile");
     spawnTile();
+  } else {
+    console.log("moveBoard(): No tiles moved, no new tile spawned");
   }
+
   return moved;
 }
 
-// 8) Collapse row to the left with merges
+/**
+ * Slides/merges a single row to the left. Returns the new row and whether it changed.
+ */
 function collapseRowLeft(row) {
   const filtered = row.filter(v => v !== 0);
   let didChange = filtered.length !== row.length;
+
   for (let i = 0; i < filtered.length - 1; i++) {
     if (filtered[i] === filtered[i + 1]) {
+      console.log(`collapseRowLeft(): merging ${filtered[i]} and ${filtered[i + 1]}`);
       filtered[i] *= 2;
       filtered.splice(i + 1, 1);
       didChange = true;
@@ -132,8 +178,11 @@ function collapseRowLeft(row) {
   return { newRow: filtered, didChange };
 }
 
-// 9) Transpose a 2D array
+/**
+ * Transposes a 2D array (rows become columns).
+ */
 function transpose(mat) {
+  console.log("transpose() called");
   const transposed = [];
   for (let c = 0; c < BOARD_SIZE; c++) {
     const newRow = [];
@@ -145,53 +194,77 @@ function transpose(mat) {
   return transposed;
 }
 
-// 10) Reverse rows in a 2D array
+/**
+ * Reverses each row of a 2D array (used for right/down moves).
+ */
 function reverseRows(mat) {
+  console.log("reverseRows() called");
   return mat.map(row => row.slice().reverse());
 }
 
-// 11) Check if the game is won or lost
+/**
+ * Checks if the board has a 1024 tile (win) or if no moves remain (loss).
+ */
 function checkGameState() {
+  console.log("checkGameState() called");
   // Check for 1024
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       if (board[r][c] === 1024) {
+        console.log("checkGameState(): 1024 tile found, player wins!");
         alert("You made the 1024 tile! (Keep going or restart?)");
         return;
       }
     }
   }
-  // Check if no moves remain
+  // Check if any moves remain
   if (!anyMovesLeft()) {
+    console.log("checkGameState(): No moves left, game over");
     alert("Game Over! No moves left.");
   }
 }
 
-// 12) Check if any move is left
+/**
+ * Determines if there is any possible move remaining (empty cell or merge).
+ */
 function anyMovesLeft() {
-  // Check for empty cell
+  console.log("anyMovesLeft() called");
+  // Check for an empty cell
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
-      if (board[r][c] === 0) return true;
+      if (board[r][c] === 0) {
+        console.log("anyMovesLeft(): Found an empty cell at", r, c);
+        return true;
+      }
     }
   }
-  // Check merges horizontally
+  // Check horizontal merges
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE - 1; c++) {
-      if (board[r][c] === board[r][c + 1]) return true;
+      if (board[r][c] === board[r][c + 1]) {
+        console.log("anyMovesLeft(): Found a horizontal merge possibility at", r, c);
+        return true;
+      }
     }
   }
-  // Check merges vertically
+  // Check vertical merges
   for (let c = 0; c < BOARD_SIZE; c++) {
     for (let r = 0; r < BOARD_SIZE - 1; r++) {
-      if (board[r][c] === board[r + 1][c]) return true;
+      if (board[r][c] === board[r + 1][c]) {
+        console.log("anyMovesLeft(): Found a vertical merge possibility at", r, c);
+        return true;
+      }
     }
   }
   return false;
 }
 
-// 13) Animate from old board to new board (slide in percentages)
+/**
+ * Animates tiles from oldBoard to newBoard by sliding them in percentages.
+ * When transitions end, finalizes the board with drawBoard() and checks state.
+ */
 function animateSlide(oldBoard, newBoard) {
+  console.log("animateSlide() called");
   const boardEl = document.getElementById("game-board");
   boardEl.innerHTML = "";  // Clear old tiles
 
@@ -217,17 +290,20 @@ function animateSlide(oldBoard, newBoard) {
         }
       }
 
-      // If no match found, treat as newly spawned
+      // If no match found, treat as newly spawned tile
       const startR = foundOldPos ? foundOldPos.r : r;
       const startC = foundOldPos ? foundOldPos.c : c;
+      console.log(`animateSlide(): tile ${newVal} moves from (${startR},${startC}) to (${r},${c})`);
 
-      // Create a temp tile at old position
+      // Create a temp tile at the old position
       const tempTile = document.createElement("div");
       tempTile.classList.add("cell");
+
+      // Use tile image
       tempTile.style.backgroundImage = `url("tiles/${newVal}.jpg")`;
       tempTile.style.backgroundSize = "cover";
 
-      // Start in old pos (in %)
+      // Start in old pos
       tempTile.style.left = getOffsetPercent(startC) + "%";
       tempTile.style.top = getOffsetPercent(startR) + "%";
       tempTile.style.width = tileSize + "%";
@@ -241,14 +317,16 @@ function animateSlide(oldBoard, newBoard) {
 
       boardEl.appendChild(tempTile);
 
-      // Force reflow
+      // Force reflow so the initial positions are set
       tempTile.getBoundingClientRect();
 
       // Slide to new position
       tilesAnimating++;
       tempTile.addEventListener("transitionend", () => {
         tilesAnimating--;
+        console.log(`animateSlide(): tile ${newVal} finished transition`);
         if (tilesAnimating === 0) {
+          console.log("animateSlide(): All transitions complete, finalizing board");
           boardEl.innerHTML = "";
           drawBoard();
           checkGameState();
@@ -256,7 +334,7 @@ function animateSlide(oldBoard, newBoard) {
         }
       });
 
-      // Animate in next frame
+      // Animate in the next frame
       requestAnimationFrame(() => {
         tempTile.style.left = getOffsetPercent(c) + "%";
         tempTile.style.top = getOffsetPercent(r) + "%";
@@ -264,8 +342,9 @@ function animateSlide(oldBoard, newBoard) {
     }
   }
 
-  // If no tiles animate at all, finalize immediately
+  // If no tiles animate, finalize immediately
   if (tilesAnimating === 0) {
+    console.log("animateSlide(): No tiles animating, finalizing immediately");
     boardEl.innerHTML = "";
     drawBoard();
     checkGameState();
@@ -273,19 +352,31 @@ function animateSlide(oldBoard, newBoard) {
   }
 }
 
-// 14) Handle a single move
+/**
+ * Wrapper to handle a single move (arrow left/right/up/down).
+ */
 function handleMove(direction) {
-  if (isAnimating) return; // skip if in the middle of an animation
-  const oldBoard = copyBoard(board);
+  if (isAnimating) {
+    console.log("handleMove(): Ignoring move, animation in progress");
+    return;
+  }
+  console.log("handleMove(): Attempting move ->", direction);
 
+  const oldBoard = copyBoard(board);
   const changed = moveBoard(direction);
-  if (!changed) return; // no movement => no animation
+
+  if (!changed) {
+    console.log("handleMove(): Move did not change the board, nothing to animate");
+    return;
+  }
 
   isAnimating = true;
   animateSlide(oldBoard, board);
 }
 
-// 15) Key listener
+/**
+ * Key listener for arrow keys.
+ */
 function handleKey(e) {
   switch (e.key) {
     case "ArrowLeft":
@@ -309,22 +400,29 @@ function handleKey(e) {
   }
 }
 
-// 16) Init game
+/**
+ * Initializes a fresh game: empty board, spawn two tiles, draw once.
+ */
 function initGame() {
+  console.log("initGame(): Starting new game");
   createEmptyBoard();
   spawnTile();
   spawnTile();
   drawBoard();
 }
 
-// 17) On page load
+/**
+ * On page load, set up everything.
+ */
 window.addEventListener("load", () => {
+  console.log("window.load event: Initializing game");
   initGame();
 
   window.addEventListener("keydown", handleKey);
 
   const newGameBtn = document.getElementById("new-game-btn");
   newGameBtn.addEventListener("click", () => {
+    console.log("New Game button clicked");
     initGame();
   });
 });
