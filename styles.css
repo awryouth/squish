@@ -5,15 +5,28 @@
   padding: 0;
 }
 
+html {
+  width: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: sans-serif;
+  background: #660066;
+
+  /* prevent overscroll bounce*/
+  position: fixed;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+
+  height: 100%;
+  min-height: 100vh;
+  padding-top: 30px;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: #f8f8f8;
-  min-height: 100vh;
   justify-content: flex-start;
-  padding-top: 30px;
+  align-items: center;
 }
 
 h1 {
