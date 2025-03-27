@@ -14,6 +14,10 @@ setInterval(() => {
   const board = document.getElementById("game-board");
   board.style.backgroundColor = getRandomColor();
 }, 7000);
+setInterval(() => {
+  const board = document.getElementById("reset-button");
+  board.style.backgroundColor = getRandomColor();
+}, 11000);
 
 // Returns a random hex color string like "#A1B2C3"
 function getRandomColor() {
@@ -521,7 +525,7 @@ window.addEventListener("load", () => {
   window.addEventListener("touchend", handleTouchEnd);
 
   // "New Game" button
-  document.getElementById("new-game-btn").addEventListener("click", () => {
+  document.getElementById("reset-button").addEventListener("click", () => {
     initGame();
   });
 });
