@@ -11,7 +11,7 @@ setInterval(() => {
   document.body.style.backgroundColor = getRandomColor();
 }, 9000);
 setInterval(() => {
-  const board = document.getElementById("game-container");
+  const board = document.getElementById("game-board");
   board.style.backgroundColor = getRandomColor();
 }, 7000);
 
