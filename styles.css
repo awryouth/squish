@@ -14,7 +14,7 @@ html, body {
   justify-content: center;
   align-items: center;
 
-  background: #660066;
+  transition: background-color 3s ease-in-out;
 
   font-family: Tahoma, Arial, sans-serif;
   font-weight: bold;
