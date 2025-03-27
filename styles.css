@@ -14,6 +14,7 @@ html, body {
   justify-content: center;
   align-items: center;
 
+  background: #aabbaa;
   transition: background-color 9s ease-in-out;
 
   font-family: Tahoma, Arial, sans-serif;
@@ -38,6 +39,7 @@ html, body {
   width: 100%;
   height: 100%;
 
+  background: #baaaab;
   transition: background-color 7s ease-in-out;
 }
 
@@ -81,6 +83,7 @@ html, body {
      0 1px 2px #000;
 
   background: #bbaabb;
+  transition: background-color 9s ease-in-out;
 }
 
 #reset-button:active {
