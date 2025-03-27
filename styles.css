@@ -87,6 +87,10 @@ html, body {
   transition: background-color 9s ease-in-out;
 }
 
+.reset-button:hover {
+  border-color: 2px #aabbaa;
+}
+
 #reset-button:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset;
