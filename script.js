@@ -328,7 +328,6 @@ function animateSlide(oldBoard, newBoard) {
 function finalizeAnimation(boardEl) {
   boardEl.innerHTML = "";
   drawBoard();
-  checkGameState();
   isAnimating = false;
 }
 
@@ -382,50 +381,6 @@ function handleMove(direction) {
 
   isAnimating = true;
   animateSlide(oldB, board);
-}
-
-/**
- * Check if 1024 tile or no moves remain.
- */
-function checkGameState() {
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE; c++) {
-      const tile = board[r][c];
-      if (tile && tile.value === 1024) {
-        alert("You made the 1024 tile! (Keep going or restart?)");
-        return;
-      }
-    }
-  }
-  if (!anyMovesLeft()) {
-    alert("Game Over! No moves left.");
-  }
-}
-
-/**
- * True if there's an empty cell or a merge possibility.
- */
-function anyMovesLeft() {
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE; c++) {
-      if (!board[r][c]) return true;
-    }
-  }
-  // check horizontal merges
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE - 1; c++) {
-      const a = board[r][c], b = board[r][c+1];
-      if (a && b && a.value === b.value) return true;
-    }
-  }
-  // check vertical merges
-  for (let c = 0; c < BOARD_SIZE; c++) {
-    for (let r = 0; r < BOARD_SIZE - 1; r++) {
-      const a = board[r][c], b = board[r+1][c];
-      if (a && b && a.value === b.value) return true;
-    }
-  }
-  return false;
 }
 
 /**
