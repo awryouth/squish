@@ -1,1 +1,1 @@
-[# squish](https://awryouth.github.io/squish/)
+# [squish](https://awryouth.github.io/squish/)
