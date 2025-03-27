@@ -32,20 +32,20 @@ html, body {
   aspect-ratio: 1 / 1;
   position: relative;
   border-radius: 24px;
+
+  background: #baaaab;
+  transition: background-color 7s ease-in-out;
 }
 
 #game-board {
   position: absolute;
   width: 100%;
   height: 100%;
-
-  background: #baaaab;
-  transition: background-color 7s ease-in-out;
 }
 
 .cell {
   position: absolute;
-  border-radius: 16px;
+  border-radius: 24px;
   transition: top 0.2s ease, left 0.2s ease;
   display: flex;
   align-items: center;
