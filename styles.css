@@ -60,27 +60,27 @@ html, body {
   font-size: 48px;
   color: #fff;
   text-shadow:
-    -1px 0 2px #000,
-     1px 0 2px #000,
-     0 -1px 2px #000,
-     0 1px 2px #000;
+    -1px 0 2px #444,
+     1px 0 2px #444,
+     0 -1px 2px #444,
+     0 1px 2px #444;
 }
 
 #reset-button {
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 36px;
+  margin-bottom: 36px;
 
   padding: 24px;
-  border-radius: 16px;
+  border-radius: 24px;
   cursor: pointer;
 
   font-size: 32px;
   color: #fff;
   text-shadow:
-    -1px 0 2px #000,
-     1px 0 2px #000,
-     0 -1px 2px #000,
-     0 1px 2px #000;
+    -1px 0 2px #444,
+     1px 0 2px #444,
+     0 -1px 2px #444,
+     0 1px 2px #444;
 
   background: #bbaabb;
   transition: background-color 9s ease-in-out;
