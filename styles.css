@@ -50,7 +50,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.4);
 }
 
 .tile-value {
@@ -86,5 +86,5 @@ html, body {
 
 #reset-button:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4) inset;
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.4) inset;
 }
