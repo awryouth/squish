@@ -89,5 +89,5 @@ html, body {
 
 #reset-button:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) inset;
 }
