@@ -6,6 +6,26 @@
  * - Mobile swipe detection
  ***********************************************************/
 
+// Every few second, change the background colors
+setInterval(() => {
+  document.body.style.backgroundColor = getRandomColor();
+}, 9000);
+setInterval(() => {
+  const board = document.getElementById("game-board");
+  board.style.backgroundColor = getRandomColor();
+}, 7000);
+
+// Returns a random hex color string like "#A1B2C3"
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    // picks a random character from letters and appends it
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 const BOARD_SIZE = 4;
 let board = [];
 let isAnimating = false;
