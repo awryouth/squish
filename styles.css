@@ -50,6 +50,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .tile-value {
@@ -80,11 +81,7 @@ html, body {
   border: 0px;
   background: #bbaabb;
   transition: background-color 9s ease-in-out;
-  transition: box-shadow 0.3s;
-}
-
-.reset-button:hover {
-  box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
+  transition: box-shadow 0.2s;
 }
 
 #reset-button:active {
