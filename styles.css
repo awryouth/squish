@@ -76,12 +76,7 @@ html, body {
 
   font-size: 32px;
   color: #fff;
-  text-shadow:
-    -1px 0 2px #444,
-     1px 0 2px #444,
-     0 -1px 2px #444,
-     0 1px 2px #444;
-  
+
   border: 0px;
   background: #bbaabb;
   transition: background-color 9s ease-in-out;
